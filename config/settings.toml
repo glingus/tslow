@@ -1,0 +1,138 @@
+# tslow settings: thresholds, periods, retention.
+# Windows system processes (L0) and maintenance processes (L2) are hardcoded in
+# src/tslow/protection.py and are NOT configurable. Only the apps you add under [protection]
+# below are yours to choose. Installed, this file lives in C:\Program Files\TSlow and is
+# writable only by an administrator, which is what keeps the protection list trustworthy.
+
+[watcher]
+# true = the watcher only detects, notifies and records your decisions; it never touches a process.
+# false = it carries out the decisions you confirm (lower priority, close or kill), always after
+# re-checking protection and process identity.
+# Restart the "TSlow Monitor" scheduled task after changing it.
+# `tslow daemon --dry-run/--no-dry-run` overrides it for one run.
+dry_run = true
+
+[updates]
+# The watcher checks GitHub Releases for a newer version at most every check_interval_hours and
+# shows a notification. It never installs anything by itself: run `tslow update` from an
+# administrator terminal to download (SHA-256 verified) and install it.
+# Stays off until `repository` is set to the real "owner/name" of the GitHub repository.
+enabled = true
+repository = "OWNER/tslow"
+check_interval_hours = 24
+
+[protection]
+# Apps tslow must never touch, whatever they do (level L0). Names without ".exe".
+# Example: untouchable = ["chrome", "firefox", "code"]
+untouchable = []
+# Every descendant of these apps gets "free rein" (L1): only a critical slowdown asks you.
+free_rein_parents = []
+# [child, ancestor] pairs: the child is untouchable only when it runs under that ancestor.
+# Example: untouchable_children = [["node", "code"]]
+untouchable_children = []
+
+[calibration]
+started_at = ""          # ISO timestamp, set on the first run of the watcher
+duration_hours = 24
+
+[sampler]
+# sampler periods in seconds per state (the idle tick has a separate value on battery)
+idle_tick = 5
+idle_tick_battery = 10
+idle_gpu = 60
+
+watching_tick = 2
+watching_gpu = 10
+
+investigating_tick = 1
+investigating_gpu = 5
+
+hysteresis_drop_seconds = 60
+
+[incidents]
+# open incidents nobody answered are closed as "expired" after this many minutes
+expire_after_minutes = 30
+
+[governor]
+budget_cpu_percent = 0.25
+average_minutes = 5
+max_factor = 4.0
+reduction_threshold_fraction = 0.33
+
+[thresholds.cpu]
+anomaly_percent = 85
+anomaly_window_seconds = 30
+critical_percent = 95
+critical_queue_per_core = 4
+critical_group_percent = 60
+culprit_group_percent = 35
+critical_window_seconds = 20
+
+[thresholds.ram]
+anomaly_available_percent_max = 10
+anomaly_commit_percent_min = 90
+anomaly_page_reads_sec = 100
+critical_commit_percent = 95
+critical_available_percent_max = 5
+critical_page_reads_sec = 500
+critical_group_percent_physical_ram = 40
+critical_group_growth_gb_2min = 1
+culprit_group_percent = 25
+
+[thresholds.disk]
+anomaly_latency_ms = 50
+anomaly_iops_min = 20
+anomaly_queue_min = 2
+critical_latency_ms = 200
+critical_group_percent_io = 70
+critical_free_space_gb_max = 2
+critical_group_write_mb_s = 50
+culprit_group_percent_bytes = 50
+
+[thresholds.network]
+window_seconds = 60
+anomaly_percent_link = 80
+anomaly_sigma = 4
+anomaly_mbit_s_min = 5
+
+[thresholds.gpu]
+window_seconds = 60
+anomaly_engine_percent = 90
+culprit_group_engine_percent = 60
+
+[thresholds.leak]
+growth_mb_per_min = 30
+duration_minutes = 10
+r2_min = 0.8
+threshold_mb = 500
+
+[thresholds.hung]
+duration_seconds = 30
+cpu_percent_min = 25
+io_mb_s_min = 1
+wm_close_wait_seconds = 3
+
+[thresholds.throttling]
+load_percent_min = 60
+performance_percent_max = 60
+duration_seconds = 60
+
+[notifications]
+app_cooldown_minutes = 15
+hourly_limit_total = 4
+protected_cooldown_minutes = 60
+
+[retention]
+metrics_raw_hours = 48
+metrics_1m_days = 30
+metrics_1h_days = 365
+process_minutes_days = 7
+monitor_health_days = 7
+notifications_days = 90
+
+[actions]
+hard_wm_close_wait_seconds = 10
+hard_reduced_wait_seconds = 3
+soft_to_hard_escalation_minutes = 3
+consecutive_denies_to_ignore = 3
+learned_ignore_days = 30

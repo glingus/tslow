@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+logs/
+*.db
+*.db-wal
+*.db-shm
+.pytest_cache/
+.coverage
+htmlcov/
+web/node_modules/
+web/dist/
+
+.claude/
+*.db.bak-v*
+web/*.tsbuildinfo
