@@ -16,9 +16,9 @@ dry_run = true
 # The watcher checks GitHub Releases for a newer version at most every check_interval_hours and
 # shows a notification. It never installs anything by itself: run `tslow update` from an
 # administrator terminal to download (SHA-256 verified) and install it.
-# Stays off until `repository` is set to the real "owner/name" of the GitHub repository.
+# Set to the GitHub repository releases are downloaded from; replace it (or set enabled = false) for a fork.
 enabled = true
-repository = "OWNER/tslow"
+repository = "glingus/tslow"
 check_interval_hours = 24
 
 [protection]

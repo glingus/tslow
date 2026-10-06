@@ -146,9 +146,8 @@ to `true` any time to return to watch-only. For a one-off run from a terminal,
 
 ## Updating
 
-If `[updates] repository` in `settings.toml` is set to the project's GitHub repository (it ships as
-the placeholder `OWNER/tslow`, which keeps the updater off), the watcher looks for a newer release
-once a day and shows a notification. It never installs anything by itself. To update, from an
+The watcher looks for a newer release on GitHub (`[updates] repository`, shipped as
+`glingus/tslow`; set `enabled = false` to turn it off, or point it at your fork) once a day and shows a notification. It never installs anything by itself. To update, from an
 **administrator** terminal:
 
 ```bash

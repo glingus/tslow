@@ -199,7 +199,7 @@ def test_check_for_update_is_silent_when_unconfigured_or_offline(tmp_path: Path)
         conn.close()
 
 
-def test_shipped_settings_keep_updater_off_until_configured() -> None:
+def test_shipped_settings_point_at_the_project_repository() -> None:
     from tslow.config import load_settings
 
-    assert updater.configured_repo(load_settings()) is None
+    assert updater.configured_repo(load_settings()) == "glingus/tslow"
