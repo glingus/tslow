@@ -25,7 +25,7 @@
     "d3-array": "^3.2.4",
     "d3-shape": "^3.2.0",
     "lucide-react": "^1.46.0",
-    "motion": "^13.3.0",
+    "motion": "^14.0.0",
     "radix-ui": "^1.6.7",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
