@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tslow"
-version = "0.1.0"
+version = "0.1.1"
 description = "System Monitor & Optimizer for Windows"
 readme = "README.md"
 license = { file = "LICENSE" }
