@@ -49,7 +49,7 @@ jobs:
           Compress-Archive -Path stage/* -DestinationPath $zip
           $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
           "$hash  $zip" | Out-File -FilePath SHA256SUMS -Encoding ascii
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: |
             tslow-*.zip
