@@ -30,7 +30,7 @@ jobs:
       - name: Run the tests
         shell: pwsh
         run: |
-          python -m pip install ".[daemon,cli,web,dev]"
+          python -m pip install -e ".[daemon,cli,web,dev]"
           python -m pytest -q
       - name: Build the web dashboard
         shell: pwsh
