@@ -244,6 +244,41 @@ def _end_scheduled_task() -> None:
     subprocess.run(["schtasks", "/End", "/TN", TASK_NAME], check=False)
 
 
+def _runtime_processes() -> list:
+    """Processi il cui eseguibile sta nel runtime installato (il watcher e, a volte, una `tslow` in corso)."""
+    import os
+
+    import psutil
+
+    me = os.getpid()
+    found = []
+    for proc in psutil.process_iter(["pid", "exe"]):
+        exe = proc.info.get("exe")
+        if exe and proc.info["pid"] != me and Path(exe).is_relative_to(RUNTIME_DIR):
+            found.append(proc)
+    return found
+
+
+def _stop_watcher(timeout_s: float = 10.0) -> None:
+    """Ferma il task e ogni processo del runtime: finche' girano tengono aperte le DLL e impediscono di sostituirlo."""
+    import psutil
+
+    _end_scheduled_task()
+    procs = _runtime_processes()
+    for proc in procs:
+        try:
+            proc.terminate()
+        except psutil.Error:
+            pass
+    _gone, alive = psutil.wait_procs(procs, timeout=timeout_s)
+    for proc in alive:
+        try:
+            proc.kill()
+        except psutil.Error:
+            pass
+    psutil.wait_procs(alive, timeout=timeout_s)
+
+
 def _run_scheduled_task() -> None:
     subprocess.run(["schtasks", "/Run", "/TN", TASK_NAME], check=False)
 
@@ -264,7 +299,7 @@ def update(project_root: Path) -> None:
     if not is_elevated():
         raise PermissionError("tslow update needs an administrator terminal.")
     python_exe = RUNTIME_DIR / "python.exe"
-    _end_scheduled_task()
+    _stop_watcher()
     try:
         _install_dependencies(python_exe, project_root)
         _write_settings(project_root)
@@ -282,6 +317,7 @@ def install(project_root: Path) -> None:
     python_exe = RUNTIME_DIR / "python.exe"
     pythonw_exe = RUNTIME_DIR / "pythonw.exe"
 
+    _stop_watcher()
     _copy_runtime(RUNTIME_DIR)
     _install_dependencies(python_exe, project_root)
     _write_settings(project_root)
@@ -298,6 +334,7 @@ def uninstall() -> None:
         raise PermissionError("tslow uninstall needs an administrator terminal.")
 
     _unregister_scheduled_task()
+    _stop_watcher()
     _unregister_protocol()
     _remove_windows_terminal_fragment()
     _remove_cli_shim()
